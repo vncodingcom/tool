@@ -26,123 +26,18 @@ body.loading .loading-modal {
     max-width: 90%;
     margin: 30px auto;
 } 
-.vnc-file-box{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:14px;
-  border:1.5px solid #e5e7eb;
-  border-radius:12px;
-  cursor:pointer;
-  transition:.2s;
-  background:#fafafa;
-}
-
-.vnc-file-box:hover{
-  border-color:#2563eb;
-  background:#f5f9ff;
-}
-
-.vnc-file-icon{
-  width:42px;
-  height:42px;
-  border-radius:10px;
-  background:#2563eb;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-}
-
-.vnc-file-text{
-  display:flex;
-  flex-direction:column;
-  font-size:14px;
-}
-
-.vnc-file-text span{
-  font-size:12px;
-  color:#6b7280;
-}
-.vnc-success{
-  margin-top:12px;
-  text-align: center;  
-}
-
-.vnc-success-text, .vnc-tb-text{
-  font-size:14px;
-  color:#16a34a;
-  font-weight:600;
-  margin-bottom:8px;
-  text-align: center;
-  gap:6px;
-}
-
-.vnc-check{
-  background:#16a34a;
-  color:#fff;
-  width:18px;
-  height:18px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:50%;
-  font-size:12px;
-}
-
-.vnc-input-group{
-  display:flex;
-  gap:6px;
-}
-
-.vnc-input-group input{
-  flex:1;
-  height:38px;
-  border:1px solid #ddd;
-  border-radius:8px;
-  padding:0 10px;
-  font-size:13px;
-}
-  
-.vnc-btn{
-  margin-top:10px;
-  width:100%;
-  height:40px;
-  border:none;
-  border-radius:10px;
-  background:#1877f2;
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.vnc-btn:hover{
-  opacity:.9;
-}  
-
-.vnc-copy-btn{
-  height:38px;
-  padding:0 14px;
-  border:none;
-  border-radius:8px;
-  background:#2563eb;
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-  white-space:nowrap;
-}
-
-.vnc-copy-btn:hover{
-  background:#1d4ed8;
-}  
-.vnc-preview {
-    text-align: center;
-    margin: 20px 0;
-}   
 img#preview {
     max-width: 100%;
 }
+.vnc-upload-box{max-width:420px;margin:auto;padding:20px;border:1px solid #eee;border-radius:12px;background:#fff}
+.vnc-file-box{display:flex;align-items:center;gap:12px;padding:14px;border:2px dashed #ddd;border-radius:10px;cursor:pointer;margin-bottom:10px}
+.vnc-file-icon{font-size:24px}
+.vnc-btn{width:100%;padding:10px;background:#2563eb;color:#fff;border:none;border-radius:8px;margin-top:10px;cursor:pointer}
+.vnc-preview img{max-width:100%;margin-top:10px;border-radius:10px}
+.vnc-input-group{display:flex;gap:6px;margin-top:10px}
+.vnc-input-group input{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px}
+.vnc-copy-btn{padding:8px 10px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer}
+.vnc-success{margin-top:10px}
     </style>
   <body>
       <div class="top-header">
@@ -157,19 +52,19 @@ img#preview {
     <header>
         <h1>Upload Ảnh</h1>
     </header>
-      <div class="vnc-tb-text">
-      <span class="vnc-check">✔</span> Upload ảnh chỉ dành cho hệ thống comment của VNCoding.Com
-    </div>
 <div class="vnc-upload-box">
-<div class="vnc-file-box" onclick="document.getElementById('uploadInput').click()">
-  <div class="vnc-file-icon">📷</div>
-  <div class="vnc-file-text">
-    <b>Chọn ảnh</b>
-    <span id="fileName">Chưa có file nào</span>
-  </div>
-</div>
 
-<input type="file" id="uploadInput" accept="image/*" hidden onchange="handleFileName()">
+  <h3>Upload ảnh chỉ dành cho hệ thống comment của VNCoding.Com</h3>
+
+  <div class="vnc-file-box" onclick="document.getElementById('uploadInput').click()">
+    <div class="vnc-file-icon">📷</div>
+    <div class="vnc-file-text">
+      <b>Chọn ảnh</b>
+      <span id="fileName">Chưa có file nào</span>
+    </div>
+  </div>
+
+  <input type="file" id="uploadInput" accept="image/*" hidden onchange="handleFileName()">
 
   <button class="vnc-btn" onclick="startUpload()">Upload ảnh</button>
 
@@ -181,15 +76,38 @@ img#preview {
 
 </div>
 
+
 <script>
 const API = "https://img.vncoding.com";
 
+// 🚀 UPLOAD
 async function startUpload(){
 
   const file = document.getElementById("uploadInput").files[0];
 
+  // ⛔ chưa chọn file
   if(!file){
-    alert("Chọn ảnh đi");
+    alert("Chọn ảnh đi anh em!");
+    return;
+  }
+
+  // ⛔ chống spam 10s
+  const last = localStorage.getItem("vnc_last_upload");
+  if(last && Date.now() - last < 10000){
+    alert("⛔ Bạn thao tác quá nhanh");
+    return;
+  }
+  localStorage.setItem("vnc_last_upload", Date.now());
+
+  // ⛔ check dung lượng
+  if(file.size > 2 * 1024 * 1024){
+    alert("⛔ Ảnh tối đa 2MB");
+    return;
+  }
+
+  // ⛔ check loại file
+  if(!file.type.startsWith("image/")){
+    alert("⛔ Chỉ cho phép ảnh");
     return;
   }
 
@@ -199,7 +117,7 @@ async function startUpload(){
 
   try{
 
-    const res = await fetch(API + "?ip=" + getIP(), {
+    const res = await fetch(API, {
       method: "POST",
       body: JSON.stringify({
         image: base64.split(",")[1],
@@ -218,18 +136,14 @@ async function startUpload(){
 
       document.getElementById("preview").src = finalUrl;
 
-document.getElementById("result").innerHTML = `
-  <div class="vnc-success">
-    <div class="vnc-success-text">
-      <span class="vnc-check">✔</span> Upload thành công
-    </div>
-
-    <div class="vnc-input-group">
-      <input id="imgLink" value="${finalUrl}" readonly>
-      <button class="vnc-copy-btn" onclick="copyLink()">Copy</button>
-    </div>
-  </div>
-`;
+      document.getElementById("result").innerHTML = `
+      <div class="vnc-success">
+        ✔ Upload thành công
+        <div class="vnc-input-group">
+          <input id="imgLink" value="${finalUrl}" readonly>
+          <button class="vnc-copy-btn" onclick="copyLink()">Copy</button>
+        </div>
+      </div>`;
 
     }else{
       document.getElementById("result").innerText = data.message;
@@ -239,106 +153,77 @@ document.getElementById("result").innerHTML = `
     document.getElementById("result").innerText = "❌ Lỗi upload";
   }
 }
-  
+
+// 📛 tên file
 function handleFileName(){
   const file = document.getElementById("uploadInput").files[0];
   document.getElementById("fileName").innerText = file ? file.name : "Chưa có file nào";
-}  
+}
 
+// 📋 copy
 function copyLink(){
   const input = document.getElementById("imgLink");
   navigator.clipboard.writeText(input.value);
-
-  const btn = document.querySelector(".vnc-copy-btn");
-  btn.innerText = "Copied!";
-  btn.style.background = "#16a34a";
-
-  setTimeout(()=>{
-    btn.innerText = "Copy";
-    btn.style.background = "#2563eb";
-  },1500);
 }
 
-// 📉 compress + watermark
+// 🖼 compress + watermark
 async function compressImage(file){
 
   const img = await createImageBitmap(file);
 
   const canvas = document.createElement("canvas");
 
-  const MAX_WIDTH = 1280;
-
-  let scale = Math.min(1, MAX_WIDTH / img.width);
+  const scale = Math.min(1, 1280 / img.width);
 
   canvas.width = img.width * scale;
   canvas.height = img.height * scale;
 
   const ctx = canvas.getContext("2d");
 
-  // vẽ ảnh
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-// =========================
-// 🔥 WATERMARK VNCODING PRO
-// =========================
+  // 🔥 WATERMARK
+  const text = "vncoding.com";
+  const fontSize = Math.max(16, canvas.width * 0.02);
 
-const text = "vncoding.com";
+  ctx.font = `bold ${fontSize}px Arial`;
 
-// size chữ theo ảnh
-const fontSize = Math.max(16, canvas.width * 0.02);
-ctx.font = `bold ${fontSize}px Arial`;
+  const padding = 16;
+  const radius = 10;
 
-const padding = 16;
-const radius = 10;
+  const textWidth = ctx.measureText(text).width;
 
-const textWidth = ctx.measureText(text).width;
+  const boxWidth = textWidth + padding * 2;
+  const boxHeight = fontSize + padding;
 
-const boxWidth = textWidth + padding * 2;
-const boxHeight = fontSize + padding;
+  const x = canvas.width - boxWidth - 20;
+  const y = canvas.height - boxHeight - 20;
 
-const x = canvas.width - boxWidth - 20;
-const y = canvas.height - boxHeight - 20;
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + boxWidth - radius, y);
+  ctx.quadraticCurveTo(x + boxWidth, y, x + boxWidth, y + radius);
+  ctx.lineTo(x + boxWidth, y + boxHeight - radius);
+  ctx.quadraticCurveTo(x + boxWidth, y + boxHeight, x + boxWidth - radius, y + boxHeight);
+  ctx.lineTo(x + radius, y + boxHeight);
+  ctx.quadraticCurveTo(x, y + boxHeight, x, y + boxHeight - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
 
-// 👉 vẽ rounded box
-ctx.beginPath();
-ctx.moveTo(x + radius, y);
-ctx.lineTo(x + boxWidth - radius, y);
-ctx.quadraticCurveTo(x + boxWidth, y, x + boxWidth, y + radius);
-ctx.lineTo(x + boxWidth, y + boxHeight - radius);
-ctx.quadraticCurveTo(x + boxWidth, y + boxHeight, x + boxWidth - radius, y + boxHeight);
-ctx.lineTo(x + radius, y + boxHeight);
-ctx.quadraticCurveTo(x, y + boxHeight, x, y + boxHeight - radius);
-ctx.lineTo(x, y + radius);
-ctx.quadraticCurveTo(x, y, x + radius, y);
-ctx.closePath();
+  ctx.fillStyle = "rgba(0,0,0,0.25)";
+  ctx.fill();
 
-// 👉 nền trong suốt nhẹ (glass effect)
-ctx.fillStyle = "rgba(0,0,0,0.25)";
-ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.3)";
+  ctx.stroke();
 
-// 👉 viền mờ
-ctx.strokeStyle = "rgba(255,255,255,0.3)";
-ctx.lineWidth = 1;
-ctx.stroke();
-
-// 👉 chữ
-ctx.fillStyle = "rgba(255,255,255,0.85)";
-ctx.fillText(text, x + padding, y + boxHeight - 6);
-
-// =========================
-
+  ctx.fillStyle = "rgba(255,255,255,0.85)";
+  ctx.fillText(text, x + padding, y + boxHeight - 6);
 
   return canvas.toDataURL("image/webp", 0.7);
 }
 
-function getIP(){
-  return localStorage.getItem("vnc_ip") || (function(){
-    let ip = Math.random().toString(36).substring(2);
-    localStorage.setItem("vnc_ip", ip);
-    return ip;
-  })();
-}
-
+// 🔗 convert link
 function convertDriveLink(url){
 
   let match = url.match(/id=([a-zA-Z0-9_-]+)/);
@@ -347,14 +232,9 @@ function convertDriveLink(url){
     return "https://lh3.googleusercontent.com/d/" + match[1] + "=w1000";
   }
 
-  if(url.includes("lh3.googleusercontent.com")){
-    return url;
-  }
-
   return url;
 }
 </script>
-
          <div class="copyright-container">
             <p class="text-center ">©
                 <span id="current-year">2024</span>

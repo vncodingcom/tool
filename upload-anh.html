@@ -206,15 +206,26 @@ function handleFileName(){
 
 // =================== COPY ===================
 function copyLink(btn){
-  navigator.clipboard.writeText(imgLink.value);
 
-  btn.innerText = "✔";
-  btn.style.background="#16a34a";
+  const input = document.getElementById("imgLink");
 
-  setTimeout(()=>{
-    btn.innerText="Copy";
-    btn.style.background="#2563eb";
-  },1200);
+  navigator.clipboard.writeText(input.value).then(()=>{
+
+    btn.innerHTML = "✔ Copied";
+    btn.style.background = "#16a34a";
+
+    btn.style.transform = "scale(0.95)";
+
+    setTimeout(()=>{
+      btn.innerHTML = "Copy";
+      btn.style.background = "#2563eb";
+      btn.style.transform = "scale(1)";
+    },1200);
+
+  }).catch(()=>{
+    alert("Copy thất bại 😢");
+  });
+
 }
 
 // =================== COMPRESS ===================

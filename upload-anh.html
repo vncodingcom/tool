@@ -26,124 +26,116 @@ body.loading .loading-modal {
     max-width: 90%;
     margin: 30px auto;
 } 
-.showimg img {
-    max-width:100%;
+.vnc-file-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  border:1.5px solid #e5e7eb;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.2s;
+  background:#fafafa;
 }
-.infoimg {
-    margin:0 auto;
-    margin-top:20px;
-    margin-bottom:20px
+
+.vnc-file-box:hover{
+  border-color:#2563eb;
+  background:#f5f9ff;
 }
-.dropzone p {
-    margin:15px 0;
-    text-align:center;
-    width:100%;
-    font-weight:bold;
-    color: #dd6666;
+
+.vnc-file-icon{
+  width:42px;
+  height:42px;
+  border-radius:10px;
+  background:#2563eb;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
 }
-.input {
-    height:100%;
-    left:0;
-    outline:0;
-    opacity:0;
-    position:absolute;
-    top:0;
-    width:100%;
-    cursor:-webkit-zoom-in;
+
+.vnc-file-text{
+  display:flex;
+  flex-direction:column;
+  font-size:14px;
 }
-.status {
-    border-radius:5px;
-    text-align:center;
-    margin-left:auto;
-    margin-right:auto
+
+.vnc-file-text span{
+  font-size:12px;
+  color:#6b7280;
 }
-.image-url {
-    width: calc(100% - 20px);
-    padding: 10px;
-    border: 1px solid #dd6666;
-    border-radius: 5px;
-    color: #dd6666;
+.vnc-success{
+  margin-top:12px;
 }
-.linkimg {
-    margin:20px 0
+
+.vnc-success-text{
+  font-size:14px;
+  color:#16a34a;
+  font-weight:600;
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
-.dropzone.dropzone-dragging {
-    border-color:#000
+
+.vnc-check{
+  background:#16a34a;
+  color:#fff;
+  width:18px;
+  height:18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  font-size:12px;
 }
-.loading-modal {
-    background-color:rgba(255,255,255,.8);
-    display:none;
-    position:fixed;
-    z-index:1000;
-    top:0;
-    left:0;
-    height:100%;
-    width:100%
+
+.vnc-input-group{
+  display:flex;
+  gap:6px;
 }
-.loading-table {
-    margin-left:auto;
-    margin-right:auto;
-    margin-top:15%;
-    margin-bottom:15%
+
+.vnc-input-group input{
+  flex:1;
+  height:38px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:0 10px;
+  font-size:13px;
 }
-#codes,#lines, #resultpoints {
-    width:calc(100% - 20px);
-    height: 100px;
-    resize: none;
-    padding:10px;
-    border-color: #dddfe2;
+  
+.vnc-btn{
+  margin-top:10px;
+  width:100%;
+  height:40px;
+  border:none;
+  border-radius:10px;
+  background:#1877f2;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
 }
-#codes  {
-    background-color: #fff;
-    border-left: 10px solid #dddfe2!important;
-    overflow: auto;
-    border: 1px solid #dddfe2;
-    width: -webkit-fill-available;
-    position: relative;
-    border-width: 1px 1px 1px 0;
-    padding: 10px;
-    height: 100px;
-    overflow-y: scroll;
-    margin: 20px 0;
-    resize: none;
+
+.vnc-btn:hover{
+  opacity:.9;
+}  
+
+.vnc-copy-btn{
+  height:38px;
+  padding:0 14px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
 }
-.input-label  {
-    display: block;
-    margin-bottom: 10px;
-}
-.input-textarea, #outputText  {
-    width: 98%;
-    padding: 5px;
-    resize: none;
-    margin-bottom: 10px;
-    border-color: #dddfe2;
-}
-.counter  {
-    font-size: 12px;
-    text-align: left;
-    margin-bottom: 10px;
-}
-.output-label  {
-    display: block;
-    margin-bottom: 10px;
-}
-.buttons  {
-    text-align: left;
-}
-.buttons button  {
-    margin-left: 5px;
-}
-.copyright-container {
-    position: relative;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #ddd;
-    color: #333;
-    font-size: 15px;
-    text-align: center;
-    padding: 1px ;
-}
+
+.vnc-copy-btn:hover{
+  background:#1d4ed8;
+}  
     </style>
   <body>
       <div class="top-header">
@@ -159,12 +151,151 @@ body.loading .loading-modal {
         <h1>Upload Ảnh</h1>
     </header>
       
-      <div class="dropzone">
-<div class="infoimg">
+<div class="vnc-upload-box">
+
+  <h3>📤 Upload ảnh comment</h3>
+
+<div class="vnc-file-box" onclick="document.getElementById('uploadInput').click()">
+  <div class="vnc-file-icon">📷</div>
+  <div class="vnc-file-text">
+    <b>Chọn ảnh</b>
+    <span id="fileName">Chưa có file nào</span>
   </div>
-      </div>
-  <script src="/js/ImagesUploadimgur.js"></script>
-  <script src="/js/ImagesUploadupload.js"></script>
+</div>
+
+<input type="file" id="uploadInput" accept="image/*" hidden onchange="handleFileName()">
+
+  <button class="vnc-btn" onclick="startUpload()">Upload ảnh</button>
+
+  <div id="result" class="vnc-result"></div>
+
+  <div class="vnc-preview">
+    <img id="preview">
+  </div>
+
+</div>
+
+<script>
+const API = "https://img.vncoding.com";
+
+async function startUpload(){
+
+  const file = document.getElementById("uploadInput").files[0];
+
+  if(!file){
+    alert("Chọn ảnh đi");
+    return;
+  }
+
+  const base64 = await compressImage(file);
+
+  document.getElementById("result").innerHTML = "⏳ Đang upload...";
+
+  try{
+
+    const res = await fetch(API + "?ip=" + getIP(), {
+      method: "POST",
+      body: JSON.stringify({
+        image: base64.split(",")[1],
+        type: "image/webp"
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await res.json();
+
+    if(data.status === "success"){
+
+      const finalUrl = convertDriveLink(data.url);
+
+      document.getElementById("preview").src = finalUrl;
+
+document.getElementById("result").innerHTML = `
+  <div class="vnc-success">
+    <div class="vnc-success-text">
+      <span class="vnc-check">✔</span> Upload thành công
+    </div>
+
+    <div class="vnc-input-group">
+      <input id="imgLink" value="${finalUrl}" readonly>
+      <button class="vnc-copy-btn" onclick="copyLink()">Copy</button>
+    </div>
+  </div>
+`;
+
+    }else{
+      document.getElementById("result").innerText = data.message;
+    }
+
+  }catch(e){
+    document.getElementById("result").innerText = "❌ Lỗi upload";
+  }
+}
+  
+function handleFileName(){
+  const file = document.getElementById("uploadInput").files[0];
+  document.getElementById("fileName").innerText = file ? file.name : "Chưa có file nào";
+}  
+
+function copyLink(){
+  const input = document.getElementById("imgLink");
+  navigator.clipboard.writeText(input.value);
+
+  const btn = document.querySelector(".vnc-copy-btn");
+  btn.innerText = "Copied!";
+  btn.style.background = "#16a34a";
+
+  setTimeout(()=>{
+    btn.innerText = "Copy";
+    btn.style.background = "#2563eb";
+  },1500);
+}
+
+async function compressImage(file){
+
+  const img = await createImageBitmap(file);
+
+  const canvas = document.createElement("canvas");
+
+  const MAX_WIDTH = 1280;
+
+  let scale = Math.min(1, MAX_WIDTH / img.width);
+
+  canvas.width = img.width * scale;
+  canvas.height = img.height * scale;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  return canvas.toDataURL("image/webp", 0.7);
+}
+
+function getIP(){
+  return localStorage.getItem("vnc_ip") || (function(){
+    let ip = Math.random().toString(36).substring(2);
+    localStorage.setItem("vnc_ip", ip);
+    return ip;
+  })();
+}
+
+function convertDriveLink(url){
+
+  let match = url.match(/id=([a-zA-Z0-9_-]+)/);
+
+  if(match){
+    return "https://lh3.googleusercontent.com/d/" + match[1] + "=w1000";
+  }
+
+  if(url.includes("lh3.googleusercontent.com")){
+    return url;
+  }
+
+  return url;
+}
+</script>
+
          <div class="copyright-container">
             <p class="text-center ">©
                 <span id="current-year">2024</span>

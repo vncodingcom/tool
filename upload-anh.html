@@ -2,147 +2,151 @@
 <html lang="vi">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='/images/favicon.ico' rel='icon' type='image/x-icon'>
-    <link href='https://cdn.jsdelivr.net/gh/blogspotvn/tool/css/font-awesome/5.15.4/css/all.css' rel='stylesheet' type='text/css'/>
-    <link rel="stylesheet" href="/css/style.css">
-    <title>Upload Ảnh</title>
-   </head>
-    <style>
-body.loading .loading-modal {
-    display:block
-}
-.dropzone {
-    border: 2px dashed #dd6666;
-    border-radius:10px;
-    position:relative;
-    margin:0 auto;
-    clear:both;
-    background: #eee;
-}
-.container {
-    width: 1024px;
-    max-width: 90%;
-    margin: 30px auto;
-} 
-img#preview {
-    max-width: 100%;
-}
-h3 {
-    text-align: center;
-    color: #005b54;
-}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href='/images/favicon.ico' rel='icon' type='image/x-icon'>
+<link href='https://cdn.jsdelivr.net/gh/blogspotvn/tool/css/font-awesome/5.15.4/css/all.css' rel='stylesheet'/>
+<link rel="stylesheet" href="/css/style.css">
+<title>Upload Ảnh</title>
+
+<style>
+body.loading .loading-modal{display:block}
+.container{width:1024px;max-width:90%;margin:30px auto}
+h1{text-align:center;color:#005b54}
 .vnc-upload-box{max-width:420px;margin:auto;padding:20px;border:1px solid #eee;border-radius:12px;background:#fff}
 .vnc-file-box{display:flex;align-items:center;gap:12px;padding:14px;border:2px dashed #ddd;border-radius:10px;cursor:pointer;margin-bottom:10px}
 .vnc-file-icon{font-size:24px}
 .vnc-btn{width:100%;padding:10px;background:#2563eb;color:#fff;border:none;border-radius:8px;margin-top:10px;cursor:pointer}
+.vnc-btn:disabled{background:#9ca3af;cursor:not-allowed}
 .vnc-preview img{max-width:100%;margin-top:10px;border-radius:10px}
 .vnc-input-group{display:flex;gap:6px;margin-top:10px}
 .vnc-input-group input{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px}
 .vnc-copy-btn{padding:8px 10px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer}
 .vnc-success{margin-top:10px}
-.vnc-note{
-  margin-top:12px;
-  padding:12px 14px;
-  background:#fff7ed;
-  border:1px solid #fed7aa;
-  border-radius:10px;
-  font-size:13px;
-  line-height:1.6;
-  color:#9a3412;
-}
-.vnc-note ul{
-  padding-left:18px;
-  margin:6px 0;
-}
-    </style>
-  <body>
-      <div class="top-header">
-            <a class="logo" href="https://tool.vncoding.com" id="logo">
-                <div class="logotop">
-                    <img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=50&url=https://www.vncoding.com"/>
-                </div>
-                <div class="text">VNCoding.Com</div>
-            </a>
-        </div>
-    <div class='container'>
-    <header>
-        <h1>Upload Ảnh</h1>
-    </header>
+.vnc-note{margin-top:12px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;font-size:13px;line-height:1.6;color:#9a3412}
+.vnc-note ul{padding-left:18px;margin:6px 0}
+.quota{font-size:12px;color:#666;margin-top:6px}
+.quota.low{color:#dc2626;font-weight:600}
+</style>
+</head>
+
+<body>
+
+<div class="top-header">
+  <a class="logo" href="https://tool.vncoding.com">
+    <div class="logotop">
+      <img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=50&url=https://www.vncoding.com"/>
+    </div>
+    <div class="text">VNCoding.Com</div>
+  </a>
+</div>
+
+<div class="container">
+
+<header>
+  <h1>Upload Ảnh</h1>
+</header>
+
 <div class="vnc-upload-box">
 
-
-
-  <div class="vnc-file-box" onclick="document.getElementById('uploadInput').click()">
+  <div class="vnc-file-box" onclick="uploadInput.click()">
     <div class="vnc-file-icon">📷</div>
-    <div class="vnc-file-text">
-      <b>Chọn ảnh</b>
+    <div>
+      <b>Chọn ảnh</b><br>
       <span id="fileName">Chưa có file nào</span>
     </div>
   </div>
 
   <input type="file" id="uploadInput" accept="image/*" hidden onchange="handleFileName()">
 
-  <button class="vnc-btn" onclick="startUpload()">Upload ảnh</button>
+  <button id="uploadBtn" class="vnc-btn" onclick="startUpload()">Upload ảnh</button>
 
-  <div id="result" class="vnc-result"></div>
+  <div id="quota" class="quota">Đang tải quota...</div>
+
+  <div id="result"></div>
 
   <div class="vnc-preview">
     <img id="preview">
   </div>
 
-<div class="vnc-note">
-📌 Công cụ upload ảnh này được thiết kế riêng cho hệ thống bình luận tại <b>VNCoding.com</b>.<br><br>
+  <div class="vnc-note">
+    📌 Công cụ này chỉ dùng cho bình luận tại <b>VNCoding.com</b>.<br><br>
+    ⚠️ Giới hạn:
+    <ul>
+      <li>1 ảnh / 10 giây</li>
+      <li>20 ảnh / giờ</li>
+    </ul>
+    🚫 Spam sẽ bị chặn tự động.
+  </div>
 
-👉 Quy định sử dụng:
-<ul>
-<li>Chỉ dùng để đăng ảnh trong phần bình luận.</li>
-<li>Không sử dụng như dịch vụ lưu trữ hoặc chia sẻ ảnh.</li>
-<li>Nội dung phải phù hợp, không vi phạm pháp luật.</li>
-</ul>
-
-⚠️ Giới hạn hệ thống:
-<ul>
-<li>Tối đa 1 ảnh mỗi 10 giây.</li>
-<li>Tối đa 20 ảnh mỗi giờ cho mỗi người dùng.</li>
-</ul>
-
-🚫 Hệ thống sẽ tự động chặn nếu phát hiện spam hoặc lạm dụng.
 </div>
-    
 </div>
-
 
 <script>
 const API = "https://img.vncoding.com";
+let remainUpload = 20;
 
-// 🚀 UPLOAD
+// =================== LOAD QUOTA ===================
+getQuota();
+
+async function getQuota(){
+  try{
+    const res = await fetch(API,{method:"POST"});
+    const data = await res.json();
+
+    if(data.remain !== undefined){
+      updateQuota(data.remain);
+    }
+  }catch(e){
+    document.getElementById("quota").innerText = "Không lấy được quota";
+  }
+}
+
+function updateQuota(remain){
+  remainUpload = remain;
+
+  const el = document.getElementById("quota");
+
+  el.innerText = "📊 Bạn còn " + remain + " lượt upload trong giờ";
+
+  if(remain <= 5){
+    el.classList.add("low");
+  }
+
+  if(remain <= 0){
+    document.getElementById("uploadBtn").disabled = true;
+  }
+}
+
+// =================== UPLOAD ===================
 async function startUpload(){
 
-  const file = document.getElementById("uploadInput").files[0];
+  if(remainUpload <= 0){
+    alert("⛔ Bạn đã hết lượt upload");
+    return;
+  }
 
-  // ⛔ chưa chọn file
+  const file = uploadInput.files[0];
+
   if(!file){
     alert("Chọn ảnh đi anh em!");
     return;
   }
 
-  // ⛔ chống spam 10s
   const last = localStorage.getItem("vnc_last_upload");
+
   if(last && Date.now() - last < 10000){
-    alert("⛔ Bạn thao tác quá nhanh");
+    alert("⛔ Đợi 10 giây rồi upload tiếp");
     return;
   }
+
   localStorage.setItem("vnc_last_upload", Date.now());
 
-  // ⛔ check dung lượng
-  if(file.size > 2 * 1024 * 1024){
+  if(file.size > 2*1024*1024){
     alert("⛔ Ảnh tối đa 2MB");
     return;
   }
 
-  // ⛔ check loại file
   if(!file.type.startsWith("image/")){
     alert("⛔ Chỉ cho phép ảnh");
     return;
@@ -150,142 +154,119 @@ async function startUpload(){
 
   const base64 = await compressImage(file);
 
-  document.getElementById("result").innerHTML = "⏳ Đang upload...";
+  result.innerHTML = "⏳ Đang upload...";
 
   try{
 
-    const res = await fetch(API, {
-      method: "POST",
-      body: JSON.stringify({
-        image: base64.split(",")[1],
-        type: "image/webp"
+    const res = await fetch(API,{
+      method:"POST",
+      body:JSON.stringify({
+        image:base64.split(",")[1],
+        type:"image/webp"
       }),
-      headers: {
-        "Content-Type": "application/json"
-      }
+      headers:{"Content-Type":"application/json"}
     });
 
     const data = await res.json();
 
-    if(data.status === "success"){
+    if(data.status==="success"){
 
-      const finalUrl = convertDriveLink(data.url);
+      const url = convertDriveLink(data.url);
 
-      document.getElementById("preview").src = finalUrl;
+      preview.src = url;
 
-      document.getElementById("result").innerHTML = `
+      updateQuota(data.remain);
+
+      result.innerHTML = `
       <div class="vnc-success">
         ✔ Upload thành công
+        <div style="font-size:12px;margin-top:4px">
+          📊 Còn ${data.remain} lượt
+        </div>
+
         <div class="vnc-input-group">
-          <input id="imgLink" value="${finalUrl}" readonly>
-          <button class="vnc-copy-btn" onclick="copyLink()">Copy</button>
+          <input id="imgLink" value="${url}" readonly>
+          <button class="vnc-copy-btn" onclick="copyLink(this)">Copy</button>
         </div>
       </div>`;
 
     }else{
-      document.getElementById("result").innerText = data.message;
+      result.innerText = data.message;
     }
 
   }catch(e){
-    document.getElementById("result").innerText = "❌ Lỗi upload";
+    result.innerText = "❌ Lỗi upload";
   }
 }
 
-// 📛 tên file
+// =================== FILE NAME ===================
 function handleFileName(){
-  const file = document.getElementById("uploadInput").files[0];
-  document.getElementById("fileName").innerText = file ? file.name : "Chưa có file nào";
+  fileName.innerText = uploadInput.files[0]?.name || "Chưa có file nào";
 }
 
-// 📋 copy
-function copyLink(){
-  const input = document.getElementById("imgLink");
-  navigator.clipboard.writeText(input.value);
+// =================== COPY ===================
+function copyLink(btn){
+  navigator.clipboard.writeText(imgLink.value);
+
+  btn.innerText = "✔";
+  btn.style.background="#16a34a";
+
+  setTimeout(()=>{
+    btn.innerText="Copy";
+    btn.style.background="#2563eb";
+  },1200);
 }
 
-// 🖼 compress + watermark
+// =================== COMPRESS ===================
 async function compressImage(file){
 
   const img = await createImageBitmap(file);
 
   const canvas = document.createElement("canvas");
 
-  const scale = Math.min(1, 1280 / img.width);
+  const scale = Math.min(1,1280/img.width);
 
-  canvas.width = img.width * scale;
-  canvas.height = img.height * scale;
+  canvas.width = img.width*scale;
+  canvas.height = img.height*scale;
 
   const ctx = canvas.getContext("2d");
 
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img,0,0,canvas.width,canvas.height);
 
-  // 🔥 WATERMARK
-  const text = "vncoding.com";
-  const fontSize = Math.max(16, canvas.width * 0.02);
+  // watermark
+  const text="vncoding.com";
+  const fs = Math.max(16,canvas.width*0.02);
 
-  ctx.font = `bold ${fontSize}px Arial`;
+  ctx.font=`bold ${fs}px Arial`;
 
-  const padding = 16;
-  const radius = 10;
+  const w = ctx.measureText(text).width;
 
-  const textWidth = ctx.measureText(text).width;
+  const x = canvas.width - w - 30;
+  const y = canvas.height - 20;
 
-  const boxWidth = textWidth + padding * 2;
-  const boxHeight = fontSize + padding;
+  ctx.fillStyle="rgba(0,0,0,0.25)";
+  ctx.fillRect(x-10,y-fs,w+20,fs+10);
 
-  const x = canvas.width - boxWidth - 20;
-  const y = canvas.height - boxHeight - 20;
+  ctx.fillStyle="rgba(255,255,255,0.85)";
+  ctx.fillText(text,x,y);
 
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + boxWidth - radius, y);
-  ctx.quadraticCurveTo(x + boxWidth, y, x + boxWidth, y + radius);
-  ctx.lineTo(x + boxWidth, y + boxHeight - radius);
-  ctx.quadraticCurveTo(x + boxWidth, y + boxHeight, x + boxWidth - radius, y + boxHeight);
-  ctx.lineTo(x + radius, y + boxHeight);
-  ctx.quadraticCurveTo(x, y + boxHeight, x, y + boxHeight - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
-
-  ctx.fillStyle = "rgba(0,0,0,0.25)";
-  ctx.fill();
-
-  ctx.strokeStyle = "rgba(255,255,255,0.3)";
-  ctx.stroke();
-
-  ctx.fillStyle = "rgba(255,255,255,0.85)";
-  ctx.fillText(text, x + padding, y + boxHeight - 6);
-
-  return canvas.toDataURL("image/webp", 0.7);
+  return canvas.toDataURL("image/webp",0.7);
 }
 
-// 🔗 convert link
+// =================== LINK ===================
 function convertDriveLink(url){
-
-  let match = url.match(/id=([a-zA-Z0-9_-]+)/);
-
-  if(match){
-    return "https://lh3.googleusercontent.com/d/" + match[1] + "=w1000";
-  }
-
-  return url;
+  const m = url.match(/id=([a-zA-Z0-9_-]+)/);
+  return m ? "https://lh3.googleusercontent.com/d/"+m[1]+"=w1000" : url;
 }
 </script>
-         <div class="copyright-container">
-            <p class="text-center ">©
-                <span id="current-year">2024</span>
-                <script type="text/javascript">
-                    function getCurrentYear() {
-                    var d = new Date();
-                    return d.getFullYear();
-                    }
-                    el = document.getElementById('current-year');
-                    el.innerHTML = getCurrentYear();
-                </script>
-                by
-                <a href="https://www.vncoding.com/ ">VNCoding.Com</a>
-            </p>
-        </div>   
+
+<div class="copyright-container">
+<p class="text-center">© <span id="year"></span> by <a href="https://www.vncoding.com/">VNCoding.Com</a></p>
+</div>
+
+<script>
+document.getElementById("year").innerText = new Date().getFullYear();
+</script>
+
 </body>
-  </html>
+</html>

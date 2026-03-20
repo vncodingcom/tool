@@ -148,7 +148,7 @@ img#preview {
       <div class="top-header">
             <a class="logo" href="https://tool.vncoding.com" id="logo">
                 <div class="logotop">
-                    <i class="fab fa-blogger fa-3x"></i>
+                    <img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=50&url=https://www.vncoding.com"/>
                 </div>
                 <div class="text">VNCoding.Com</div>
             </a>
@@ -157,7 +157,9 @@ img#preview {
     <header>
         <h1>Upload Ảnh</h1>
     </header>
-      
+      <div class="vnc-success-text">
+      <span class="vnc-check">✔</span> Upload ảnh chỉ dành cho hệ thống comment của VNCoding.Com
+    </div>
 <div class="vnc-upload-box">
 <div class="vnc-file-box" onclick="document.getElementById('uploadInput').click()">
   <div class="vnc-file-icon">📷</div>
@@ -257,6 +259,7 @@ function copyLink(){
   },1500);
 }
 
+// 📉 compress + watermark
 async function compressImage(file){
 
   const img = await createImageBitmap(file);
@@ -271,7 +274,59 @@ async function compressImage(file){
   canvas.height = img.height * scale;
 
   const ctx = canvas.getContext("2d");
+
+  // vẽ ảnh
   ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+// =========================
+// 🔥 WATERMARK VNCODING PRO
+// =========================
+
+const text = "vncoding.com";
+
+// size chữ theo ảnh
+const fontSize = Math.max(16, canvas.width * 0.02);
+ctx.font = `bold ${fontSize}px Arial`;
+
+const padding = 16;
+const radius = 10;
+
+const textWidth = ctx.measureText(text).width;
+
+const boxWidth = textWidth + padding * 2;
+const boxHeight = fontSize + padding;
+
+const x = canvas.width - boxWidth - 20;
+const y = canvas.height - boxHeight - 20;
+
+// 👉 vẽ rounded box
+ctx.beginPath();
+ctx.moveTo(x + radius, y);
+ctx.lineTo(x + boxWidth - radius, y);
+ctx.quadraticCurveTo(x + boxWidth, y, x + boxWidth, y + radius);
+ctx.lineTo(x + boxWidth, y + boxHeight - radius);
+ctx.quadraticCurveTo(x + boxWidth, y + boxHeight, x + boxWidth - radius, y + boxHeight);
+ctx.lineTo(x + radius, y + boxHeight);
+ctx.quadraticCurveTo(x, y + boxHeight, x, y + boxHeight - radius);
+ctx.lineTo(x, y + radius);
+ctx.quadraticCurveTo(x, y, x + radius, y);
+ctx.closePath();
+
+// 👉 nền trong suốt nhẹ (glass effect)
+ctx.fillStyle = "rgba(0,0,0,0.25)";
+ctx.fill();
+
+// 👉 viền mờ
+ctx.strokeStyle = "rgba(255,255,255,0.3)";
+ctx.lineWidth = 1;
+ctx.stroke();
+
+// 👉 chữ
+ctx.fillStyle = "rgba(255,255,255,0.85)";
+ctx.fillText(text, x + padding, y + boxHeight - 6);
+
+// =========================
+
 
   return canvas.toDataURL("image/webp", 0.7);
 }

@@ -10,23 +10,131 @@
 <title>Upload Ảnh</title>
 
 <style>
-body.loading .loading-modal{display:block}
-.container{width:1024px;max-width:90%;margin:30px auto}
-h1{text-align:center;color:#005b54}
-.vnc-upload-box{max-width:420px;margin:auto;padding:20px;border:1px solid #eee;border-radius:12px;background:#fff}
-.vnc-file-box{display:flex;align-items:center;gap:12px;padding:14px;border:2px dashed #ddd;border-radius:10px;cursor:pointer;margin-bottom:10px}
-.vnc-file-icon{font-size:24px}
-.vnc-btn{width:100%;padding:10px;background:#2563eb;color:#fff;border:none;border-radius:8px;margin-top:10px;cursor:pointer}
-.vnc-btn:disabled{background:#9ca3af;cursor:not-allowed}
-.vnc-preview img{max-width:100%;margin-top:10px;border-radius:10px}
-.vnc-input-group{display:flex;gap:6px;margin-top:10px}
-.vnc-input-group input{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px}
-.vnc-copy-btn{padding:8px 10px;background:#2563eb;color:#fff;border:none;border-radius:6px;cursor:pointer}
-.vnc-success{margin-top:10px}
-.vnc-note{margin-top:12px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;font-size:13px;line-height:1.6;color:#9a3412}
-.vnc-note ul{padding-left:18px;margin:6px 0}
-.quota{font-size:12px;color:#666;margin-top:6px}
-.quota.low{color:#dc2626;font-weight:600}
+body{
+  font-family:sans-serif;
+  background:#f5f7fb;
+  margin:0;
+}
+
+.container{
+  max-width:420px;
+  margin:40px auto;
+  padding:20px;
+}
+
+.box{
+  background:#fff;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.05);
+}
+
+h1{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.file-box{
+  border:2px dashed #ddd;
+  padding:16px;
+  border-radius:10px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  cursor:pointer;
+}
+
+.file-box:hover{
+  border-color:#2563eb;
+}
+
+.btn{
+  width:100%;
+  padding:12px;
+  margin-top:12px;
+  border:none;
+  background:#2563eb;
+  color:#fff;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.btn:disabled{
+  background:#9ca3af;
+}
+
+.preview img{
+  width:100%;
+  margin-top:12px;
+  border-radius:10px;
+}
+
+.result{
+  margin-top:12px;
+}
+
+/* ===== LINK BOX XỊN ===== */
+.vnc-input-group{
+  display:flex;
+  align-items:center;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:12px;
+  background:#f9fafb;
+  transition:all .2s;
+}
+
+.vnc-input-group:focus-within{
+  border-color:#2563eb;
+  box-shadow:0 0 0 2px rgba(37,99,235,.15);
+}
+
+.vnc-input-group input{
+  flex:1;
+  padding:10px 12px;
+  border:none;
+  background:transparent;
+  font-size:13px;
+}
+
+.vnc-input-group input:focus{
+  outline:none;
+}
+
+.vnc-copy-btn{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:10px 12px;
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  font-size:13px;
+  transition:all .2s;
+}
+
+.vnc-copy-btn:hover{
+  background:#1d4ed8;
+}
+
+.vnc-copy-btn:active{
+  transform:scale(.95);
+}
+
+/* ===== QUOTA ===== */
+.quota{
+  font-size:13px;
+  margin-top:10px;
+  color:#555;
+}
+
+.quota.low{
+  color:#dc2626;
+  font-weight:600;
+}
 </style>
 </head>
 

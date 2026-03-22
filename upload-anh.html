@@ -95,75 +95,73 @@ h1{text-align:center;color:#005b54}
 const API = "https://img.vncoding.com";
 let remainUpload = 20;
 
-// =================== LOAD QUOTA ===================
+// ================= GET QUOTA (GET)
 getQuota();
 
 async function getQuota(){
   try{
-    const res = await fetch(API,{method:"POST"});
+    const res = await fetch(API); // ✅ GET
     const data = await res.json();
 
     if(data.remain !== undefined){
       updateQuota(data.remain);
     }
   }catch(e){
-    document.getElementById("quota").innerText = "Không lấy được quota";
+    quota.innerText = "Không lấy được quota";
   }
 }
 
 function updateQuota(remain){
   remainUpload = remain;
 
-  const el = document.getElementById("quota");
-
-  el.innerText = "📊 Bạn còn " + remain + " lượt upload trong giờ";
+  quota.innerText = "📊 Còn " + remain + " lượt upload";
 
   if(remain <= 5){
-    el.classList.add("low");
+    quota.classList.add("low");
   }
 
   if(remain <= 0){
-    document.getElementById("uploadBtn").disabled = true;
+    uploadBtn.disabled = true;
   }
 }
 
-// =================== UPLOAD ===================
+// ================= FILE
+function handleFile(){
+  fileName.innerText = uploadInput.files[0]?.name || "Chưa chọn";
+}
+
+// ================= UPLOAD
 async function startUpload(){
 
   if(remainUpload <= 0){
-    alert("⛔ Bạn đã hết lượt upload");
+    alert("⛔ Hết lượt upload");
     return;
   }
 
   const file = uploadInput.files[0];
 
   if(!file){
-    alert("Chọn ảnh đi anh em!");
+    alert("Chọn ảnh đi!");
     return;
   }
 
-  const last = localStorage.getItem("vnc_last_upload");
-
+  // chống spam client
+  const last = localStorage.getItem("last_upload");
   if(last && Date.now() - last < 10000){
-    alert("⛔ Đợi 10 giây rồi upload tiếp");
+    alert("⛔ Đợi 10 giây");
     return;
   }
 
-  localStorage.setItem("vnc_last_upload", Date.now());
+  localStorage.setItem("last_upload", Date.now());
 
   if(file.size > 2*1024*1024){
-    alert("⛔ Ảnh tối đa 2MB");
+    alert("⛔ Ảnh max 2MB");
     return;
   }
 
-  if(!file.type.startsWith("image/")){
-    alert("⛔ Chỉ cho phép ảnh");
-    return;
-  }
+  const base64 = await compress(file);
 
-  const base64 = await compressImage(file);
-
-  result.innerHTML = "⏳ Đang upload...";
+  result.innerText = "⏳ Đang upload...";
 
   try{
 
@@ -178,25 +176,19 @@ async function startUpload(){
 
     const data = await res.json();
 
-    if(data.status==="success"){
+    if(data.status === "success"){
 
-      const url = convertDriveLink(data.url);
+      const url = convertLink(data.url);
 
       preview.src = url;
 
       updateQuota(data.remain);
 
       result.innerHTML = `
-      <div class="vnc-success">
-        ✔ Upload thành công
-        <div style="font-size:12px;margin-top:4px">
-          📊 Còn ${data.remain} lượt
-        </div>
-
-        <div class="vnc-input-group">
-          <input id="imgLink" value="${url}" readonly>
-          <button class="vnc-copy-btn" onclick="copyLink(this)">Copy</button>
-        </div>
+      ✔ Upload thành công
+      <div class="input-group">
+        <input id="imgLink" value="${url}" readonly>
+        <button class="copy-btn" onclick="copyLink(this)">Copy</button>
       </div>`;
 
     }else{
@@ -204,41 +196,27 @@ async function startUpload(){
     }
 
   }catch(e){
-    result.innerText = "❌ Lỗi upload";
+    result.innerText = "❌ Upload lỗi";
   }
 }
 
-// =================== FILE NAME ===================
-function handleFileName(){
-  fileName.innerText = uploadInput.files[0]?.name || "Chưa có file nào";
-}
-
-// =================== COPY ===================
+// ================= COPY
 function copyLink(btn){
-
   const input = document.getElementById("imgLink");
 
   navigator.clipboard.writeText(input.value).then(()=>{
-
-    btn.innerHTML = "✔ Copied";
+    btn.innerText = "✔";
     btn.style.background = "#16a34a";
 
-    btn.style.transform = "scale(0.95)";
-
     setTimeout(()=>{
-      btn.innerHTML = "Copy";
+      btn.innerText = "Copy";
       btn.style.background = "#2563eb";
-      btn.style.transform = "scale(1)";
-    },1200);
-
-  }).catch(()=>{
-    alert("Copy thất bại 😢");
+    },1000);
   });
-
 }
 
-// =================== COMPRESS ===================
-async function compressImage(file){
+// ================= COMPRESS + WATERMARK
+async function compress(file){
 
   const img = await createImageBitmap(file);
 
@@ -250,31 +228,28 @@ async function compressImage(file){
   canvas.height = img.height*scale;
 
   const ctx = canvas.getContext("2d");
-
   ctx.drawImage(img,0,0,canvas.width,canvas.height);
 
   // watermark
   const text="vncoding.com";
-  const fs = Math.max(16,canvas.width*0.02);
-
-  ctx.font=`bold ${fs}px Arial`;
+  ctx.font="bold 20px Arial";
 
   const w = ctx.measureText(text).width;
 
-  const x = canvas.width - w - 30;
+  const x = canvas.width - w - 20;
   const y = canvas.height - 20;
 
-  ctx.fillStyle="rgba(0,0,0,0.25)";
-  ctx.fillRect(x-10,y-fs,w+20,fs+10);
+  ctx.fillStyle="rgba(0,0,0,0.3)";
+  ctx.fillRect(x-10,y-25,w+20,30);
 
-  ctx.fillStyle="rgba(255,255,255,0.85)";
+  ctx.fillStyle="#fff";
   ctx.fillText(text,x,y);
 
   return canvas.toDataURL("image/webp",0.7);
 }
 
-// =================== LINK ===================
-function convertDriveLink(url){
+// ================= LINK
+function convertLink(url){
   const m = url.match(/id=([a-zA-Z0-9_-]+)/);
   return m ? "https://lh3.googleusercontent.com/d/"+m[1]+"=w1000" : url;
 }

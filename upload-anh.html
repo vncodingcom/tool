@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="vi">
 
 <head>
@@ -10,68 +11,52 @@
 <title>Upload Ảnh</title>
 
 <style>
-body{
-  font-family:sans-serif;
-  background:#f5f7fb;
-  margin:0;
-}
+body.loading .loading-modal{display:block}
 
-.container{
+.container{width:1024px;max-width:90%;margin:30px auto}
+h1{text-align:center;color:#005b54}
+
+.vnc-upload-box{
   max-width:420px;
-  margin:40px auto;
+  margin:auto;
   padding:20px;
+  border:1px solid #eee;
+  border-radius:12px;
+  background:#fff
 }
 
-.box{
-  background:#fff;
-  padding:20px;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.05);
-}
-
-h1{
-  text-align:center;
-  margin-bottom:20px;
-}
-
-.file-box{
-  border:2px dashed #ddd;
-  padding:16px;
-  border-radius:10px;
+.vnc-file-box{
   display:flex;
-  gap:10px;
   align-items:center;
+  gap:12px;
+  padding:14px;
+  border:2px dashed #ddd;
+  border-radius:10px;
   cursor:pointer;
+  margin-bottom:10px
 }
 
-.file-box:hover{
-  border-color:#2563eb;
-}
+.vnc-file-box:hover{border-color:#2563eb}
 
-.btn{
+.vnc-file-icon{font-size:24px}
+
+.vnc-btn{
   width:100%;
-  padding:12px;
-  margin-top:12px;
-  border:none;
+  padding:10px;
   background:#2563eb;
   color:#fff;
+  border:none;
   border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
+  margin-top:10px;
+  cursor:pointer
 }
 
-.btn:disabled{
-  background:#9ca3af;
-}
+.vnc-btn:disabled{background:#9ca3af;cursor:not-allowed}
 
-.preview img{
-  width:100%;
-  margin-top:12px;
-  border-radius:10px;
-}
-
-.result{
-  margin-top:12px;
+.vnc-preview img{
+  max-width:100%;
+  margin-top:10px;
+  border-radius:10px
 }
 
 /* ===== LINK BOX XỊN ===== */
@@ -83,12 +68,12 @@ h1{
   overflow:hidden;
   margin-top:12px;
   background:#f9fafb;
-  transition:all .2s;
+  transition:.2s
 }
 
 .vnc-input-group:focus-within{
   border-color:#2563eb;
-  box-shadow:0 0 0 2px rgba(37,99,235,.15);
+  box-shadow:0 0 0 2px rgba(37,99,235,.15)
 }
 
 .vnc-input-group input{
@@ -96,12 +81,10 @@ h1{
   padding:10px 12px;
   border:none;
   background:transparent;
-  font-size:13px;
+  font-size:13px
 }
 
-.vnc-input-group input:focus{
-  outline:none;
-}
+.vnc-input-group input:focus{outline:none}
 
 .vnc-copy-btn{
   display:flex;
@@ -113,29 +96,31 @@ h1{
   border:none;
   cursor:pointer;
   font-size:13px;
-  transition:all .2s;
+  transition:.2s
 }
 
-.vnc-copy-btn:hover{
-  background:#1d4ed8;
-}
+.vnc-copy-btn:hover{background:#1d4ed8}
+.vnc-copy-btn:active{transform:scale(.95)}
 
-.vnc-copy-btn:active{
-  transform:scale(.95);
-}
+.vnc-success{margin-top:10px}
 
-/* ===== QUOTA ===== */
-.quota{
+.vnc-note{
+  margin-top:12px;
+  padding:12px 14px;
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  border-radius:10px;
   font-size:13px;
-  margin-top:10px;
-  color:#555;
+  line-height:1.6;
+  color:#9a3412
 }
 
-.quota.low{
-  color:#dc2626;
-  font-weight:600;
-}
+.vnc-note ul{padding-left:18px;margin:6px 0}
+
+.quota{font-size:12px;color:#666;margin-top:6px}
+.quota.low{color:#dc2626;font-weight:600}
 </style>
+
 </head>
 
 <body>
@@ -143,7 +128,7 @@ h1{
 <div class="top-header">
   <a class="logo" href="https://tool.vncoding.com">
     <div class="logotop">
-      <img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=50&url=https://www.vncoding.com"/>
+      <img src="https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&size=50&url=https://www.vncoding.com"/>
     </div>
     <div class="text">VNCoding.Com</div>
   </a>
@@ -167,7 +152,7 @@ h1{
 
   <input type="file" id="uploadInput" accept="image/*" hidden onchange="handleFileName()">
 
-  <button id="uploadBtn" class="vnc-btn" onclick="startUpload()">Upload ảnh</button>
+<button id="uploadBtn" class="vnc-btn" onclick="startUpload()">Upload ảnh</button>
 
   <div id="quota" class="quota">Đang tải quota...</div>
 
@@ -177,10 +162,13 @@ h1{
     <img id="preview">
   </div>
 
-<div class="vnc-note">
+  <!-- ✅ NOTE GIỮ NGUYÊN -->
+
+  <div class="vnc-note">
 📌 Công cụ upload ảnh này được thiết kế riêng cho hệ thống bình luận tại <b>VNCoding.com</b>.<br><br>
 
 👉 Quy định sử dụng:
+
 <ul>
 <li>Chỉ dùng để đăng ảnh trong phần bình luận.</li>
 <li>Không sử dụng như dịch vụ lưu trữ hoặc chia sẻ ảnh.</li>
@@ -188,13 +176,15 @@ h1{
 </ul>
 
 ⚠️ Giới hạn hệ thống:
+
 <ul>
 <li>Tối đa 1 ảnh mỗi 10 giây.</li>
 <li>Tối đa 20 ảnh mỗi giờ cho mỗi người dùng.</li>
 </ul>
 
 🚫 Hệ thống sẽ tự động chặn nếu phát hiện spam hoặc lạm dụng.
-</div>
+
+  </div>
 
 </div>
 </div>
@@ -203,12 +193,12 @@ h1{
 const API = "https://img.vncoding.com";
 let remainUpload = 20;
 
-// ================= GET QUOTA (GET)
+// ===== GET QUOTA =====
 getQuota();
 
 async function getQuota(){
   try{
-    const res = await fetch(API); // ✅ GET
+    const res = await fetch(API);
     const data = await res.json();
 
     if(data.remain !== undefined){
@@ -233,12 +223,12 @@ function updateQuota(remain){
   }
 }
 
-// ================= FILE
-function handleFile(){
-  fileName.innerText = uploadInput.files[0]?.name || "Chưa chọn";
+// ===== FILE =====
+function handleFileName(){
+  fileName.innerText = uploadInput.files[0]?.name || "Chưa có file nào";
 }
 
-// ================= UPLOAD
+// ===== UPLOAD =====
 async function startUpload(){
 
   if(remainUpload <= 0){
@@ -253,7 +243,6 @@ async function startUpload(){
     return;
   }
 
-  // chống spam client
   const last = localStorage.getItem("last_upload");
   if(last && Date.now() - last < 10000){
     alert("⛔ Đợi 10 giây");
@@ -293,10 +282,18 @@ async function startUpload(){
       updateQuota(data.remain);
 
       result.innerHTML = `
-      ✔ Upload thành công
-      <div class="input-group">
-        <input id="imgLink" value="${url}" readonly>
-        <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+      <div class="vnc-success">
+        ✔ Upload thành công
+        <div style="font-size:12px;margin-top:4px">
+          📊 Còn ${data.remain} lượt
+        </div>
+
+        <div class="vnc-input-group">
+          <input id="imgLink" value="${url}" readonly>
+          <button class="vnc-copy-btn" onclick="copyLink(this)">
+            <i class="fas fa-copy"></i> Copy
+          </button>
+        </div>
       </div>`;
 
     }else{
@@ -308,22 +305,22 @@ async function startUpload(){
   }
 }
 
-// ================= COPY
+// ===== COPY =====
 function copyLink(btn){
   const input = document.getElementById("imgLink");
 
   navigator.clipboard.writeText(input.value).then(()=>{
-    btn.innerText = "✔";
+    btn.innerHTML = '<i class="fas fa-check"></i> Copied';
     btn.style.background = "#16a34a";
 
     setTimeout(()=>{
-      btn.innerText = "Copy";
+      btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
       btn.style.background = "#2563eb";
-    },1000);
+    },1200);
   });
 }
 
-// ================= COMPRESS + WATERMARK
+// ===== COMPRESS =====
 async function compress(file){
 
   const img = await createImageBitmap(file);
@@ -338,12 +335,10 @@ async function compress(file){
   const ctx = canvas.getContext("2d");
   ctx.drawImage(img,0,0,canvas.width,canvas.height);
 
-  // watermark
   const text="vncoding.com";
   ctx.font="bold 20px Arial";
 
   const w = ctx.measureText(text).width;
-
   const x = canvas.width - w - 20;
   const y = canvas.height - 20;
 
@@ -356,7 +351,7 @@ async function compress(file){
   return canvas.toDataURL("image/webp",0.7);
 }
 
-// ================= LINK
+// ===== LINK =====
 function convertLink(url){
   const m = url.match(/id=([a-zA-Z0-9_-]+)/);
   return m ? "https://lh3.googleusercontent.com/d/"+m[1]+"=w1000" : url;
